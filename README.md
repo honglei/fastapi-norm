@@ -13,7 +13,8 @@ MicrosoftProgram_Install_and_Uninstall.meta.diagcab to uninstall and reinstall  
 On linux, file `libnorm.so` is compile under Debian10, and this lib should be in ctypes search paths, like in environment variable LD_LIBRARY_PATH
 
 the subdir is  pynorm lib,  right now support Python3 only,  the following changes are made:
-constants.py --- using enum.Enum instead and remove "NORM_" prefix
-session.py --- add type hints, add some missing functions, add return boolean value if libnorm support.
-add a user-defined index for search sessions in instance.  
+
+* constants.py --- using enum.Enum instead and remove "NORM_" prefix
+* session.py --- add type hints, add some missing functions, add return boolean value if libnorm support.
+* add a user-defined index for search sessions in instance.  
 
