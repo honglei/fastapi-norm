@@ -57,7 +57,7 @@ class Session(object):
     def getNodeId(self):
         return libnorm.NormGetLocalNodeId(self)
 
-    def setTxPort(self, txPort:int, enableReuse=False, txBindAddr=None):
+    def setTxPort(self, txPort:int, enableReuse:bool=False, txBindAddr:Optional[str]=None):
         '''
         bool NormSetTxPort(NormSessionHandle sessionHandle,
                    UINT16            txPortNumber,
@@ -128,9 +128,9 @@ class Session(object):
     def setTxSocketBuffer(self, size:int):
         libnorm.NormSetTxSocketBuffer(self, size)
 
-    def setCongestionControl(self, ccEnable, adjustRate=True):
+    def setCongestionControl(self, ccEnable:bool, adjustRate:bool=True):
         '''
-            必须在调用startSender前使用
+            must called before startSender
         '''
         libnorm.NormSetCongestionControl(self, ccEnable, adjustRate)
         
@@ -159,7 +159,7 @@ class Session(object):
     def setGrttEstimate(self, grtt:float):
         return libnorm.NormSetGrttEstimate(self, grtt)
 
-    def setGrttMax(self, grttMax):
+    def setGrttMax(self, grttMax:float):
         return libnorm.NormSetGrttMax(self, grttMax)
 
     def setGrttProbingMode(self, probingMode:c.ProbingMode):
@@ -242,7 +242,7 @@ class Session(object):
         """This will be called automatically if the receiver is active"""
         libnorm.NormStopReceiver(self)
 
-    def setRxCacheLimit(self, count):
+    def setRxCacheLimit(self, count:int):
         libnorm.NormSetRxCacheLimit(self, count)
         
     def setRxSocketBuffer(self, size:int):

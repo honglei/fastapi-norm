@@ -23,20 +23,13 @@ class DebugLevel(enum.IntEnum):
 
 # Constants
 # enum NormObjectType
-#NORM_OBJECT_NONE   = 0
-#NORM_OBJECT_DATA   = 1
-#NORM_OBJECT_FILE   = 2
-#NORM_OBJECT_STREAM = 3
 class ObjectType(enum.Enum):
     NONE   = 0
     DATA   = 1
     FILE   = 2
     STREAM = 3    
 
-## enum NormFlushMode
-#NORM_FLUSH_NONE    = 0
-#NORM_FLUSH_PASSIVE = 1
-#NORM_FLUSH_ACTIVE  = 2
+# enum NormFlushMode
 class FlushMode(enum.Enum):
     '''
        NormStreamFlush
@@ -48,9 +41,7 @@ class FlushMode(enum.Enum):
 
     
 # enum NormNackingMode
-#NORM_NACK_NONE = 0
-#NORM_NACK_INFO_ONLY = 1
-#NORM_NACK_NORMAL = 2
+
 
 class NackingMode(enum.Enum):
     '''
@@ -61,10 +52,7 @@ class NackingMode(enum.Enum):
     NORMAL = 2    
 
 # enum NormAckingStatus
-#NORM_ACK_INVALID = 0
-#NORM_ACK_FAILURE = 1
-#NORM_ACK_PENDING = 2
-#NORM_ACK_SUCCESS = 3
+
 class AckingStatus(enum.Enum):
     '''
       the return value of NormGetAckingStatus
@@ -74,10 +62,8 @@ class AckingStatus(enum.Enum):
     PENDING = 2
     SUCCESS = 3    
 
-## enum NormProbingMode
-#NORM_PROBE_NONE    = 0
-#NORM_PROBE_PASSIVE = 1
-#NORM_PROBE_ACTIVE  = 2
+# enum NormProbingMode
+
 
 class ProbingMode(enum.Enum):
     '''
@@ -87,10 +73,8 @@ class ProbingMode(enum.Enum):
     PASSIVE = 1
     ACTIVE  = 2    
 
-## enum NormSyncPolicy
-#NORM_SYNC_CURRENT = 0
-#NORM_SYNC_STREAM  = 1
-#NORM_SYNC_ALL     = 2    
+# enum NormSyncPolicy
+    
 class SyncPolicy(enum.Enum):
     '''
       used in NormSetDefaultSyncPolicy
@@ -105,10 +89,10 @@ NORM_BOUNDARY_BLOCK  = 0
 NORM_BOUNDARY_OBJECT = 1
 
 class RepairBoundary( enum.Enum):
-    BOUNDARY_BLOCK  = 0#"block"
-    BOUNDARY_OBJECT = 1#"object"    
+    BOUNDARY_BLOCK  = 0
+    BOUNDARY_OBJECT = 1   
     
-## enum NormEventType
+# enum NormEventType
 class EventType(enum.Enum):
     EVENT_INVALID          = 0
     TX_QUEUE_VACANCY       = 1

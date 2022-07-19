@@ -5,8 +5,6 @@ By: Tom Wambold <wambold@itd.nrl.navy.mil>
 
 from __future__ import absolute_import
 
-#from past.builtins import cmp
-from builtins import object
 import ctypes
 
 import pynorm.constants as c

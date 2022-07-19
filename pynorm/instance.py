@@ -77,7 +77,7 @@ class Instance(object):
     def setDebugLevel(self, level:c.DebugLevel):
         libnorm.NormSetDebugLevel(level.value)
 
-    def openDebugLog(self, path):
+    def openDebugLog(self, path:str):
         libnorm.NormOpenDebugLog(self, path.encode() )
 
     def closeDebugLog(self):
@@ -108,10 +108,10 @@ class Instance(object):
         except KeyError:
             sender = self._senders[self._estruct.sender] = Node(self._estruct.sender)
         try:
-            object = self._objects[self._estruct.object]
+            obj = self._objects[self._estruct.object]
         except KeyError:
-            object = self._objects[self._estruct.object] = Object(self._estruct.object)
-        return Event( c.EventType(self._estruct.type), self._sessions[self._estruct.session]  , sender, object)
+            obj = self._objects[self._estruct.object] = Object(self._estruct.object)
+        return Event( c.EventType(self._estruct.type), self._sessions[self._estruct.session]  , sender, obj)
 
     def getDescriptor(self) -> int:
         return libnorm.NormGetDescriptor(self)
@@ -137,9 +137,6 @@ class Instance(object):
         self.destroy()
 
     def _select_windows(self, timeout):
-        '''
-            想异步，使用该函数 
-        '''
         if timeout is None:
             timeout = win32event.INFINITE
         else:
@@ -164,7 +161,10 @@ class Instance(object):
         try:
             return self.getNextEvent()
         except NormError:
-            raise StopIteration
+          raise StopIteration
+          
+    def next(self):
+        return __next__()
 
     def __cmp__(self, other):
         def cmp(a, b):

@@ -3,8 +3,6 @@ pynorm - Python wrapper for NRL's libnorm
 By: Tom Wambold <wambold@itd.nrl.navy.mil>
 """
 
-from builtins import map
-from builtins import object
 import re
 from datetime import time
 
