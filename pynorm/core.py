@@ -137,6 +137,17 @@ def get_libnorm():
     libnorm.NormSetTxOnly.argtypes = [ctypes.c_void_p, ctypes.c_bool,
             ctypes.c_bool]
 
+    #bool NormPresetObjectInfo(NormSessionHandle  sessionHandle,             // FEC OTI is preset and not sent
+                              #unsigned long      objectSize,                // (most useful for NORM_OBJECT_STREAM)
+                              #UINT16             segmentSize, 
+                              #UINT16             numData, 
+                              #UINT16             numParity);
+    libnorm.NormPresetObjectInfo.restype = ctypes.c_bool
+    libnorm.NormPresetObjectInfo.argtypes = [ctypes.c_void_p, ctypes.c_ulong,
+            ctypes.c_uint16, ctypes.c_uint16,ctypes.c_uint16]
+    libnorm.NormPresetObjectInfo.errcheck = errcheck_bool
+    
+
     libnorm.NormChangeDestination.restype = ctypes.c_bool
     libnorm.NormChangeDestination.argtypes = [ctypes.c_void_p, ctypes.c_char_p,
             ctypes.c_uint16]
@@ -218,7 +229,7 @@ def get_libnorm():
                                         ctypes.c_uint16, ctypes.c_uint16, ctypes.c_uint8]
     libnorm.NormStartSender.errcheck = errcheck_bool
 
-    libnorm.NormStopSender.restype = None
+    libnorm.NormStopSender.restype = ctypes.c_bool
     libnorm.NormStopSender.argtypes = [ctypes.c_void_p]
 
     libnorm.NormSetTxRate.restype = None
@@ -243,7 +254,7 @@ def get_libnorm():
     libnorm.NormSetFlowControl.restype = None
     libnorm.NormSetFlowControl.argtypes = [ctypes.c_void_p, ctypes.c_double]
 
-    libnorm.NormSetTxRateBounds.restype = None
+    libnorm.NormSetTxRateBounds.restype = ctypes.c_bool
     libnorm.NormSetTxRateBounds.argtypes = [
       ctypes.c_void_p, ctypes.c_double, ctypes.c_double]
 

@@ -89,8 +89,8 @@ class Instance(object):
     def getNextEvent(self, timeout=None):
         # Use python's select because letting the C NormGetNextEvent block
         # seems to stop signals (CTRL+C) from killing the process
-        if not self._select(timeout):
-            return None
+        #if not self._select(timeout):
+            #return None
 
         result = libnorm.NormGetNextEvent(self, ctypes.byref(self._estruct), True)
 
@@ -100,17 +100,23 @@ class Instance(object):
         # Note a NORM_EVENT_INVALID can be OK (with NORM_SESSION_INVALID)    
         if self._estruct.type == c.EventType.EVENT_INVALID: 
             return Event(c.EventType.EVENT_INVALID, None, None, None)
-
+        
+        
         if self._estruct.session == c.NORM_SESSION_INVALID:
             raise NormError("No new event")
-        try:
-            sender = self._senders[self._estruct.sender]
-        except KeyError:
-            sender = self._senders[self._estruct.sender] = Node(self._estruct.sender)
-        try:
-            obj = self._objects[self._estruct.object]
-        except KeyError:
-            obj = self._objects[self._estruct.object] = Object(self._estruct.object)
+        sender = None
+        sender_id = self._estruct.sender
+        if sender_id:
+            sender = self._senders.get(sender_id)
+            if sender is None:
+                sender = self._senders[sender_id] = Node(sender_id)
+            
+        obj = None 
+        obj_id = self._estruct.object
+        if obj_id:            
+            obj =  self._objects.get(obj_id)
+            if obj is None:
+                obj = self._objects[obj_id] = Object(obj_id)
         return Event( c.EventType(self._estruct.type), self._sessions[self._estruct.session]  , sender, obj)
 
     def getDescriptor(self) -> int:

@@ -15,9 +15,13 @@ class Object(object):
     """Represents a NORM object instance"""
 
     ## Public functions
-    def __init__(self, object):
-        libnorm.NormObjectRetain(object)
-        self._object:int = object # type NormObjectHandle
+    def __init__(self, object_id):
+        libnorm.NormObjectRetain(object_id)
+        self._object:int = object_id # type NormObjectHandle
+        
+        self.begin:str=''
+        self.fileName:str=''
+        self.channelName:str=''
         
     def getType(self) -> c.ObjectType:
         value = libnorm.NormObjectGetType(self)
@@ -81,8 +85,8 @@ class Object(object):
     def streamClose(self, graceful=False):
         libnorm.NormStreamClose(self, graceful)
 
-    def streamWrite(self, msg):
-        return libnorm.NormStreamWrite(self, msg.encode('utf-8'), len(msg))
+    def streamWrite(self, msg:bytes):
+        return libnorm.NormStreamWrite(self, msg, len(msg))
 
     def streamFlush(self, eom=False, flushmode:c.FlushMode = c.FlushMode.PASSIVE):
         libnorm.NormStreamFlush(self, eom, flushmode.value)
@@ -100,11 +104,11 @@ class Object(object):
         libnorm.NormStreamMarkEom(self)
 
     ## Stream receiving functions
-    def streamRead(self, size):
+    def streamRead(self, size) -> (int,int):
         buf = ctypes.create_string_buffer(size)
         numBytes = ctypes.c_uint(ctypes.sizeof(buf))
         libnorm.NormStreamRead(self, buf, ctypes.byref(numBytes))
-        return (numBytes, buf.value)
+        return (numBytes.value, buf)
 
     def streamSeekMsgStart(self):
         return libnorm.NormStreamSeekMsgStart(self)

@@ -5,6 +5,7 @@ By: Tom Wambold <wambold@itd.nrl.navy.mil>
 
 from __future__ import absolute_import
 
+import locale
 from typing import Optional,Union
 from builtins import object
 import ctypes
@@ -14,7 +15,8 @@ import pynorm.constants as c
 from pynorm.core import libnorm, NormError
 from pynorm.object import Object
 #from pynorm.instance import Instance
-
+import os
+from collections import OrderedDict, deque
 class Session(object):
     """This represents a session tied to a particular NORM instance"""
 
@@ -35,9 +37,29 @@ class Session(object):
 
         self.multiAddr:str = address
         self.port:int = port
-        # extend
-        self.id2obj:dict[int,Object] = {} #
+        # extend sender 
+        '''
+           info2obj 
+           1，保存文件添加的先后顺序
+           2，方便获取发送队列的文件状态信息
+           3，方便移除待发送或者正在发送的文件
+           
+           info: str类型, <channelName>/<fileName>
+           
+           # NORM 发送队列的所有对象, fileEnque时添加，队列为空时清除所有对象，NORM_TX_OBJECT_PURGED消息时清除对应对象 
+        '''
+        self.info2obj:dict[str,Object] = OrderedDict() 
+        self.sendFiles:set = set() #所有已经收到 TX_OBJECT_SENT 消息的文件, 避免 
+        
         self.ackNodeIDs:set[int] = set() #所有AckNodeID的集合
+        self.isStreaming = False
+        self.conf:dict[str,Any] = {} 
+        
+        # 已经发送的文件列表 
+        self.sendFiles = set() # 已经收到TX_OBJECT_SENT消息的文件，<channelName>/<fileName> 
+        
+        #receiver only
+        self.channels:list=[] # ['第一频道','第二频道'],
 
     def destroy(self):
         '''
@@ -45,6 +67,16 @@ class Session(object):
         '''
         libnorm.NormDestroySession(self)
         del self._instance._sessions[self._session]
+        
+    def presetObjectInfo(self, objectSize:int,segmentSize:int, numData:int, numParity:int) -> bool:
+        '''
+            #bool NormPresetObjectInfo(NormSessionHandle  sessionHandle,             // FEC OTI is preset and not sent
+                              #unsigned long      objectSize,                // (most useful for NORM_OBJECT_STREAM)
+                              #UINT16             segmentSize, 
+                              #UINT16             numData, 
+                              #UINT16             numParity);
+        '''
+        return libnorm.NormPresetObjectInfo(self, objectSize,segmentSize,numData, numParity)
 
     def setUserData(self, data:str):
         """data should be a string"""
@@ -145,7 +177,10 @@ class Session(object):
            If both rateMin and rateMax are greater than or equal to zero, 
            but (rateMax < rateMin), the rate bounds will remain unset or unchanged and the function will return false.
         '''
-        return libnorm.NormSetTxRateBounds(self, rateMin, rateMax)
+        if rateMin > rateMax:
+            return False
+        libnorm.NormSetTxRateBounds(self, rateMin, rateMax)
+        return True
 
     def setTxCacheBounds(self, sizeMax:int, countMin:int, countMax:int):
         libnorm.NormSetTxCacheBounds(self, sizeMax, countMin, countMax)
@@ -178,7 +213,11 @@ class Session(object):
         libnorm.NormSetTxRobustFactor(self, robustFactor)
 
     def fileEnqueue(self, filename:str, info:bytes=b""):
-        return Object(libnorm.NormFileEnqueue(self, filename.encode(), info, len(info)))
+        '''
+           to support none-ASCII chars in filename
+        '''
+        encode:str = locale.getpreferredencoding()
+        return Object(libnorm.NormFileEnqueue(self, filename.encode(encode), info, len(info)))
 
     def dataEnqueue(self, data:bytes, info:bytes=b""):
         return Object(libnorm.NormDataEnqueue(self, data, len(data), info, len(info)))
@@ -188,6 +227,10 @@ class Session(object):
 
     def streamOpen(self, bufferSize:int, info=b""):
         return Object(libnorm.NormStreamOpen(self, bufferSize, info, len(info)))
+    def streamRead(self):
+        pass
+    
+        
 
     def sendCommand(self, cmdBuffer:bytes, robust=False):
         return libnorm.NormSendCommand(self, cmdBuffer, len(cmdBuffer), robust)

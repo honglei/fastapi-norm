@@ -11,15 +11,15 @@ from pynorm.core import libnorm
 
 #enum ProtoDebugLevel {PL_FATAL, PL_ERROR, PL_WARN, PL_INFO, PL_DEBUG, PL_TRACE, PL_DETAIL, PL_MAX, PL_ALWAYS}; 
 class DebugLevel(enum.IntEnum):
-    FATAL = 1
-    ERROR = 2
-    WARNNING =3
-    INFO  =4
-    DEBUG =5
-    TRACE =6 
-    DETAIL=7
-    MAX   =8
-    ALWAYS=9 
+    FATAL = 0
+    ERROR = 1
+    WARNNING = 2
+    INFO  =3
+    DEBUG =4
+    TRACE =5 
+    DETAIL=6
+    MAX   =7
+    ALWAYS=8 
 
 # Constants
 # enum NormObjectType
